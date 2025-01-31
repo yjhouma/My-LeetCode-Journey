@@ -1,24 +1,27 @@
-from queue import Queue
-from sys import maxsize
-
 class Solution:
     def minScore(self, n: int, roads: List[List[int]]) -> int:
-        ans = maxsize
-        gr = [[] for _ in range(n+1)]
-        for edge in roads:
-            gr[edge[0]].append((edge[1], edge[2])) # u-> {v, dis}
-            gr[edge[1]].append((edge[0], edge[2])) # v-> {u, dis}
+        roots = list(range(n+1))
 
-        vis = [0] * (n+1)
-        q = Queue()
-        q.put(1)
-        vis[1] = 1
-        while not q.empty():
-            node = q.get()
-            for v, dis in gr[node]:
-                ans = min(ans, dis)
-                if vis[v] == 0:
-                    vis[v] = 1
-                    q.put(v)
+        
+        def find_roots(node):
+            if roots[node] == node:
+                return node
+            roots[node] = find_roots(roots[node])
 
-        return ans
+            return roots[node]
+        
+        for u,v,w in roads:
+            root1, root2 = find_roots(u), find_roots(v)
+
+            if root1 == root2:
+                continue
+            roots[root2] = root1
+        
+        base = find_roots(1)
+        min_w = inf
+        for u,v,w in roads:
+            root2 = find_roots(u)
+            if base == root2:
+                min_w = min(min_w,w)
+        
+        return min_w
