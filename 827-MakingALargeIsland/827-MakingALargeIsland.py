@@ -1,47 +1,61 @@
-class Solution(object):
-    def largestIsland(self, grid):
-        """
-        :type grid: List[List[int]]
-        :rtype: int
-        """
+class Solution:
+    def largestIsland(self, grid: List[List[int]]) -> int:
+        # Mark each node island
         n = len(grid)
-        directions = [ (1,0), (-1,0), (0,1), (0,-1) ]
-        key = []
-        current_id = 2
+        land_mark = [[0 for _ in range(n)] for _ in range(n)]
+        visited = set()
+        land_size = defaultdict(lambda: 0)
+        
+        shore = set()
 
-        def dfs(i, j, id):
-            if i < 0 or j < 0 or i >= n or j >= n or grid[i][j] != 1:
-                return 0
-            grid[i][j] = id
-            count = 1
-            for dx, dy in directions:
-                count += dfs(i + dx, j + dy, id)
-            return count
+        def update_land_mark(i,j,land_idx):
+            q = deque()
+            q.append((i,j))
+            directions = [(0,1),(0,-1),(1,0),(-1,0)]
+            size = 0
+            while q:
+                r,c = q.pop()
+                if (r,c) in visited:
+                    continue
+                land_mark[r][c] = land_idx
+                size += 1
+                visited.add((r,c))
 
+                for dr, dc in directions:
+                    nr = r+dr
+                    nc = c+dc
+                    if 0<=nr<n and 0<=nc<n:
+                        if grid[nr][nc] == 1:
+                            q.append((nr,nc))
+                        else:
+                            shore.add((nr,nc))
+            return size
+        
+        land_idx = 1
         for i in range(n):
             for j in range(n):
-                if grid[i][j] == 1:
-                    size = dfs(i, j, current_id)
-                    key.append(size)
-                    current_id += 1
-
-        if not key:
+                if grid[i][j] == 1 and (i,j) not in visited:
+                    # Update the land_mark
+                    size = update_land_mark(i,j,land_idx)
+                    land_size[land_idx] = size
+                    land_idx += 1
+    
+            
+        largest_island = 0
+        if land_idx == 1:
             return 1
+        directions = [(0,1),(0,-1),(1,0),(-1,0)]
+        for i,j in shore:
+            if grid[i][j] == 0:
+                connected_island = []
+                curr_size = 1
+                for di, dj in directions:
+                    ni = i +di
+                    nj = j +dj
+                    if 0<=ni<n and 0<=nj<n and land_mark[ni][nj]>0 and land_mark[ni][nj] not in connected_island:
+                        curr_size += land_size[land_mark[ni][nj]]
+                        connected_island.append(land_mark[ni][nj])
+                largest_island = max(largest_island, curr_size)
 
-        max_size = 0
-
-        for i in range(n):
-            for j in range(n):
-                if grid[i][j] == 0:
-                    seen = set()
-                    current = 1
-                    for dx, dy in directions:
-                        ni, nj = i + dx, j + dy
-                        if 0 <= ni < n and 0 <= nj < n and grid[ni][nj] != 0:
-                            island_id = grid[ni][nj]
-                            if island_id not in seen:
-                                current += key[island_id - 2]
-                                seen.add(island_id)
-                    max_size = max(max_size, current)
-
-        return max_size if max_size != 0 else n * n
+        
+        return largest_island if largest_island > 0 else n*n
