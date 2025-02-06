@@ -2,6 +2,8 @@ class Solution:
     def tupleSameProduct(self, nums: List[int]) -> int:
         result_dct = {}
 
+
+        # Using Aritmethic series formula
         def calc_num_pairs(x):
             return 8*(((x-1)*x)//2)
 
@@ -15,7 +17,6 @@ class Solution:
                 else:
                     result_dct[temp_val] += 1
 
-        print(result_dct)
         ret = 0
         for v in result_dct.values():
             if v >= 2:
