@@ -10,7 +10,6 @@ class Solution:
             score_dp[i] = max(values[i+1]-1, score_dp[i+1]-1)
             curr_score = values[i] + score_dp[i]
             max_score = curr_score if max_score < curr_score else max_score
-        print(score_dp)
         return max_score
 
 
