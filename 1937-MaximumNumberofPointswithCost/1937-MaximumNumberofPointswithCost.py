@@ -27,5 +27,5 @@ class Solution:
                 score_dp[i][j] = points[i][j] + max(left[j], right[j])
 
 
-        print(score_dp)
+        # print(score_dp)
         return max(score_dp[-1])
