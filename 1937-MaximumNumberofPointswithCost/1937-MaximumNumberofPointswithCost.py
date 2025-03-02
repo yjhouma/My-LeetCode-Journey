@@ -10,10 +10,12 @@ class Solution:
             score_dp[0][i] = points[0][i]
 
         # Update Score DP With max score to that cell
+        left = [0]*c
+        right = [0]*c
         for i in range(1,r):
-            left = [0]*c
+            
             left[0] = score_dp[i-1][0]
-            right = [0]*c
+            
             right[-1] = score_dp[i-1][-1]
 
             # print(left)
@@ -27,5 +29,4 @@ class Solution:
                 score_dp[i][j] = points[i][j] + max(left[j], right[j])
 
 
-        # print(score_dp)
         return max(score_dp[-1])
