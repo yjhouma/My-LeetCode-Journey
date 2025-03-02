@@ -9,10 +9,12 @@ class Solution:
             if i > furthest and furthest != target:
                 return False
             
-            furthest = max(furthest, i+n)
-
             if furthest >= target:
                 return True
+                
+            furthest = max(furthest, i+n)
+
+            
 
     
         return furthest >= target
